@@ -12,8 +12,6 @@ General python 3.x.x install instructions:
 
 To run collect_checksums.py
 
-4. Install the required modules:
-   * `pip install -r requirements.txt`
-5. You can now run the script using: `python collect_checksums.py <file_or_directory_path>`
+4. You can now run the script using: `python collect_checksums.py <file_or_directory_path>`
 
 Example output included in this repo: checksums.csv
