@@ -1,4 +1,4 @@
-This repo is currently a very informal landing place for scripts I working on. 
+This repo is currently a very informal landing place for scripts I am working on. 
 
 General python 3.x.x install instructions:
 
