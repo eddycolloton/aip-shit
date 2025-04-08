@@ -87,9 +87,11 @@ def main():
     """Main function to handle command-line arguments and script execution."""
     parser = argparse.ArgumentParser(description="Collect MD5 checksums of files and directories.")
     parser.add_argument("path", help="File or directory to process")
+    parser.add_argument("output", nargs="?", default="checksums.csv", 
+                        help="Output CSV file path (default: checksums.csv)")
     args = parser.parse_args()
 
-    csv_filename = "checksums.csv"
+    csv_filename = args.output
     file_exists = os.path.isfile(csv_filename)
 
     with open(csv_filename, "a", newline="") as csvfile:
