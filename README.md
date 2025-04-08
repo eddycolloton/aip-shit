@@ -1,4 +1,8 @@
+# aip-shit
+
 This repo is currently a very informal landing place for scripts I am working on. 
+
+## install
 
 General python 3.x.x install instructions:
 
@@ -10,8 +14,31 @@ General python 3.x.x install instructions:
      * Windows: `my_checksum_env\Scripts\activate`
      * macOS/Linux: `source my_checksum_env/bin/activate`
 
-To run collect_checksums.py
+## instructions
 
-4. You can now run the script using: `python collect_checksums.py <file_or_directory_path>`
+Each script has it's own functionality
 
-Example output included in this repo: checksums.csv
+### collect_checksums.py
+
+Usage: `python collect_checksums.py <file_or_directory_path> <optional: csv output filename>`
+
+If no csv output file name is provided, checksums are written to a file named "checksums.csv" in the current working directory.    
+
+Example output included in this repo: `example_outputs/example_checksums.csv`   
+
+### dir-to-exif-csv.py
+
+Usage: `python dir-to-exif-csv.py <directory_path> <csv output filename>`
+
+Both arguments are required    
+
+Example output included in this repo: `example_outputs/exiftool_example.csv`   
+
+### dir-to-mediainfo-csv.py
+
+Usage: `python dir-to-mediainfo-csv.py <directory_path> <csv output filename>`
+
+Both arguments are required    
+
+Example output included in this repo: `example_outputs/mediainfo_example.csv`
+
