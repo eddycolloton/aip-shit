@@ -35,6 +35,14 @@ def aggregate_mediainfo(directory: str, output_csv: str = None) -> None:
     
     for root, _, files in os.walk(directory):
         for filename in files:
+            # Skip hidden files (starting with a dot)
+            if filename.startswith('.'):
+                continue
+                
+            # Skip system files (platform specific checks)
+            if is_system_file(os.path.join(root, filename)):
+                continue
+
             # Filter by file extensions (case-insensitive)
             if any(filename.lower().endswith(ext) for ext in media_extensions):
                 file_path = os.path.join(root, filename)
@@ -64,7 +72,7 @@ def aggregate_mediainfo(directory: str, output_csv: str = None) -> None:
         print("No media files found in the directory.")
         return
     
-    # Flatten and collect all unique keys
+        # Flatten and collect all unique keys
     def flatten_dict(d: Dict[str, Any], parent_key: str = '', sep: str = '_') -> Dict[str, Any]:
         items = {}
         for k, v in d.items():
@@ -83,7 +91,7 @@ def aggregate_mediainfo(directory: str, output_csv: str = None) -> None:
             else:
                 items[new_key] = v
         return items
-    
+        
     # Flatten all records and get comprehensive set of keys
     flattened_records = [flatten_dict(record) for record in all_mediainfo]
     all_keys = set(key for record in flattened_records for key in record.keys())
@@ -100,6 +108,60 @@ def aggregate_mediainfo(directory: str, output_csv: str = None) -> None:
             writer.writerow(record)
     
     print(f"Mediainfo aggregated to {output_csv}")
+
+
+def is_system_file(file_path: str) -> bool:
+    """
+    Check if a file is a system file.
+
+    This is a platform-specific check:
+    - On Windows: Checks for hidden, system attributes
+    - On macOS: Checks for specific system files and hidden flag
+    - On Linux: Simple implementation (only hidden file check)
+
+    :param file_path: Path to the file to check
+    :return: True if it's a system file, False otherwise
+    """
+    # Get the file name (without path)
+    filename = os.path.basename(file_path)
+
+    # Common system files to ignore across platforms
+    system_file_patterns = [
+        'thumbs.db', 'desktop.ini', '.ds_store', 
+        '$recycle.bin', '$RECYCLE.BIN', 
+        'system volume information',
+        '.Trashes', '.Spotlight-V100', '.fseventsd'
+    ]
+
+    # Check against common system file patterns (case insensitive)
+    if any(pattern in filename.lower() for pattern in system_file_patterns):
+        return True
+        
+    # Platform-specific checks
+    if sys.platform == 'win32':
+        try:
+            import ctypes
+            attrs = ctypes.windll.kernel32.GetFileAttributesW(file_path)
+            # Check if file has hidden or system attribute
+            if attrs != -1 and (attrs & 2 or attrs & 4):  # 2=Hidden, 4=System
+                return True
+        except (ImportError, AttributeError):
+            # If ctypes not available or function call fails
+            pass
+
+    elif sys.platform == 'darwin':  # macOS
+        try:
+            import stat
+            st = os.stat(file_path)
+            # Check if file has hidden flag (UF_HIDDEN)
+            if st.st_flags & 0x8000:  # UF_HIDDEN = 0x8000
+                return True
+        except (ImportError, AttributeError, OSError):
+            pass
+
+    # For Linux and other systems, we rely on the hidden file check (done earlier)
+
+    return False
 
 def main():
     # Check if directory path is provided
